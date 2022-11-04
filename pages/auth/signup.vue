@@ -94,7 +94,22 @@ export default {
             id: '1'
           }
         });
+      })
+      .catch((error) => {
+        console.log(error);
+        NotifierFactory.error({
+          message: this.errorCodeToMessage(error.code)
+        });
       }); 
+    },
+    errorCodeToMessage(code) {
+      var message = '';
+      if(code === 'auth/email-already-in-use') {
+        message = 'The email address is already in use by another account.'
+      } else {
+        message = 'An error occured while creating your account. Please try later.'
+      }
+      return message;
     },
     clearForm() {
       this.$refs.form.reset();
