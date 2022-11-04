@@ -53,6 +53,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import NotifierFactory from '~/services/NotifierFactory';
 
 export default {
   name: 'SignUpPage',
@@ -70,10 +71,10 @@ export default {
       ],
       passwordRules: [ 
         v => !!v || 'Password is required', 
-        // v => (v && v.length >= 5) || 'Password must have 5+ characters',
-        // v => /(?=.*[A-Z])/.test(v) || 'Must have one uppercase character', 
-        // v => /(?=.*\d)/.test(v) || 'Must have one number', 
-        // v => /([!@$%])/.test(v) || 'Must have one special character [!@#$%]' 
+        v => (v && v.length >= 5) || 'Password must have 5+ characters',
+        v => /(?=.*[A-Z])/.test(v) || 'Must have one uppercase character', 
+        v => /(?=.*\d)/.test(v) || 'Must have one number', 
+        v => /([!@$%])/.test(v) || 'Must have one special character [!@#$%]' 
       ]
     }
   },
@@ -84,7 +85,7 @@ export default {
     handleForm() {
       this.$fire.auth.createUserWithEmailAndPassword(this.auth.email, this.auth.password)
       .then((userCredential) => {
-        this.$router.push('/get-started');
+        this.$router.push('/dashboard');
         this.clearForm();
         this.setAuthUser({
           uid: userCredential.user.uid,

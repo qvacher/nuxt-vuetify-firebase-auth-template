@@ -53,6 +53,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import NotifierFactory from '~/services/NotifierFactory';
 
 export default {
   name: 'SignInPage',
@@ -79,9 +80,27 @@ export default {
       .then((userCredential) => {
         this.setUserInfo(userCredential.user.uid).then(() => {
           this.clearForm();
-          this.$router.push('/manage');
+          this.$router.push('/dashboard');
+        });
+      })
+      .catch((error) => {
+        NotifierFactory.error({
+          message: this.errorCodeToMessage(error.code)
         });
       });
+    },
+    errorCodeToMessage(code) {
+      var message = '';
+      if(code === 'auth/credential-already-in-use') {
+        message = 'An account already uses those credentials.'
+      } else if (code === 'auth/wrong-password') {
+        message = 'The password is wrong.'
+      } else if (code === 'auth/user-not-found') {
+        message = 'This users does not exist.'
+      } else {
+        message = 'An error occured during the authentication process. Please try later.'
+      }
+      return message;
     },
     clearForm() {
       this.$refs.form.reset();
