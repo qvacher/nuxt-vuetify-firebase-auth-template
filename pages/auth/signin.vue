@@ -33,13 +33,15 @@
             color="primary"
             class="mb-2 rounded-lg"
             @click:append="showPassword = !showPassword"
+            @keyup.enter="handleForm()"
           ></v-text-field>
-          <a class="account-link d-flex justify-center font-weight-medium caption">Forgot your password ?</a>
+          <!-- <a class="account-link d-flex justify-center font-weight-medium caption">Forgot your password ?</a> -->
           <v-btn 
             class="white--text rounded-lg auth__button mt-6"
             block
             x-large
-            color="primary" 
+            color="primary"
+            :loading="isAuthLoading" 
             @click="handleForm()"
           >
           Sign in
@@ -61,6 +63,7 @@ export default {
   data(){
     return {
       showPassword: false,
+      isAuthLoading: false,
       auth: {
         email: '',
         password: ''
@@ -76,6 +79,7 @@ export default {
       'setUserInfo'
     ]),
     handleForm() {
+      this.isAuthLoading = true;
       this.$fire.auth.signInWithEmailAndPassword(this.auth.email, this.auth.password)
       .then((userCredential) => {
         this.setUserInfo(userCredential.user.uid).then(() => {
@@ -87,6 +91,9 @@ export default {
         NotifierFactory.error({
           message: this.errorCodeToMessage(error.code)
         });
+      })
+      .finally(() => {
+        this.isAuthLoading = false;
       });
     },
     errorCodeToMessage(code) {
